@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card } from 'primereact/card';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -8,6 +8,7 @@ import { InputText } from 'primereact/inputtext';
 import { InputNumber } from 'primereact/inputnumber';
 import { Dropdown } from 'primereact/dropdown';
 import { Message } from 'primereact/message';
+import { Toast } from 'primereact/toast';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { Material } from '../types';
 import { materialsAPI, inventoryAPI } from '../services/api';
@@ -23,6 +24,7 @@ const Materials: React.FC = () => {
     unit: 'kg'
   });
   const [error, setError] = useState('');
+  const toast = useRef<Toast>(null);
 
   const unitOptions = [
     { label: 'kg', value: 'kg' },
@@ -71,9 +73,22 @@ const Materials: React.FC = () => {
   const handleDelete = async (id: string) => {
     try {
       await materialsAPI.delete(id);
+      toast.current?.show({
+        severity: 'success',
+        summary: 'Uspešno',
+        detail: 'Materijal je uspešno obrisan',
+        life: 3000
+      });
       fetchData();
-    } catch (error) {
-      console.error('Error deleting material:', error);
+    } catch (error: any) {
+      console.error("Error deleting material:", error);
+      const errorMessage = error.response?.data?.message || "Greška pri brisanju materijala";
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Greška',
+        detail: errorMessage,
+        life: 5000
+      });
     }
   };
 
@@ -129,13 +144,13 @@ const Materials: React.FC = () => {
 
   return (
     <div className="p-4">
+      <Toast ref={toast} />
       <div className="flex justify-content-between align-items-center mb-4">
         <h2>Upravljanje materijalima</h2>
         <div className="flex gap-2">
           <Button 
             icon="pi pi-refresh" 
             onClick={fetchData} 
-
             className="p-button-outlined"
           />
           <Button 

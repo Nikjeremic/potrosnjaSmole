@@ -85,8 +85,9 @@ const Consumption: React.FC = () => {
     try {
       await consumptionAPI.delete(id);
       fetchData();
-    } catch (error) {
-      console.error('Error deleting consumption:', error);
+    } catch (error: any) {
+      console.error("Error deleting consumption:", error);
+      setError(error.response?.data?.message || "Greška pri brisanju zapisa potrošnje");
     }
   };
 

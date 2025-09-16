@@ -1,0 +1,25 @@
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION BEGIN
+PassengerAppRoot "/home/eightcode/stock.eightcode.com"
+PassengerBaseURI "/"
+PassengerNodejs "/home/eightcode/nodevenv/stock.eightcode.com/18/bin/node"
+PassengerAppType node
+PassengerStartupFile dist/server.js
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION END
+# DO NOT REMOVE OR MODIFY. CLOUDLINUX ENV VARS CONFIGURATION BEGIN
+<IfModule Litespeed>
+</IfModule>
+# DO NOT REMOVE OR MODIFY. CLOUDLINUX ENV VARS CONFIGURATION END
+
+# IP Access Control - Allow only 212.200.104.222
+<RequireAll>
+    Require ip 212.200.104.222
+</RequireAll>
+
+RewriteEngine On
+RewriteBase /
+
+# Handle React Router - redirect all non-API requests to index.html
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/api/
+RewriteRule . /index.html [L]

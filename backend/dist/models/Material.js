@@ -61,11 +61,13 @@ const MaterialSchema = new mongoose_1.Schema({
         default: 'kg'
     },
     createdBy: {
-        type: String,
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: 'User',
         required: true
     },
     updatedBy: {
-        type: String,
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: 'User',
         required: true
     }
 }, {

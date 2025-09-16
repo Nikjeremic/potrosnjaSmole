@@ -72,9 +72,6 @@ const InventorySchema = new mongoose_1.Schema({
         default: Date.now
     }
 });
-// Add proper indexes to prevent duplicate key errors
-InventorySchema.index({ materialId: 1 }, { sparse: true, unique: true });
-InventorySchema.index({ resinId: 1 }, { sparse: true, unique: true });
 // Pre-save hook to calculate available weight
 InventorySchema.pre('save', function (next) {
     this.availableWeight = this.totalWeight - this.consumedWeight;

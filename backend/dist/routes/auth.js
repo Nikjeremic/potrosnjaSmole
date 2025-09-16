@@ -8,6 +8,7 @@ const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const express_validator_1 = require("express-validator");
 const User_1 = __importDefault(require("../models/User"));
+const server_1 = require("../server");
 const auth_1 = require("../middleware/auth");
 const router = express_1.default.Router();
 // Register
@@ -42,7 +43,7 @@ router.post('/register', [
         });
         await user.save();
         // Generate token
-        const token = jsonwebtoken_1.default.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '24h' });
+        const token = jsonwebtoken_1.default.sign({ userId: user._id, role: user.role }, server_1.JWT_SECRET, { expiresIn: '24h' });
         res.status(201).json({
             message: 'User created successfully',
             token,
@@ -83,7 +84,7 @@ router.post('/login', [
             return res.status(400).json({ message: 'Invalid credentials' });
         }
         // Generate token
-        const token = jsonwebtoken_1.default.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '24h' });
+        const token = jsonwebtoken_1.default.sign({ userId: user._id, role: user.role }, server_1.JWT_SECRET, { expiresIn: '24h' });
         res.json({
             message: 'Login successful',
             token,

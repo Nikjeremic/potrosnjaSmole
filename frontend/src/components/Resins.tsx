@@ -71,8 +71,9 @@ const Resins: React.FC = () => {
     try {
       await resinsAPI.delete(id);
       fetchData();
-    } catch (error) {
-      console.error('Error deleting resin:', error);
+    } catch (error: any) {
+      console.error("Error deleting resin:", error);
+      setError(error.response?.data?.message || "Greška pri brisanju sarze");
     }
   };
 

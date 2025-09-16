@@ -81,7 +81,8 @@ const Users: React.FC = () => {
       await usersAPI.delete(id);
       fetchData();
     } catch (error: any) {
-      console.error('Error deleting user:', error);
+      console.error("Error deleting user:", error);
+      setError(error.response?.data?.message || "Greška pri brisanju korisnika");
     }
   };
 

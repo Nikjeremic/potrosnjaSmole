@@ -1,0 +1,46 @@
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import crypto from 'crypto';
+import authRoutes from './routes/auth';
+import userRoutes from './routes/users';
+import resinRoutes from './routes/resins';
+import consumptionRoutes from './routes/consumption';
+import inventoryRoutes from './routes/inventory';
+import materialRoutes from './routes/materials';
+
+
+export const JWT_SECRET = "potrosnja-smole-jwt-secret-key-2024-production-secure-token-key";
+
+const app = express();
+const PORT = 3000;
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/resins', resinRoutes);
+app.use('/api/consumption', consumptionRoutes);
+app.use('/api/inventory', inventoryRoutes);
+app.use('/api/materials', materialRoutes);
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ message: 'Server is running!' });
+});
+
+// Connect to MongoDB
+mongoose.connect('mongodb+srv://niksys97_mngdb_user:ViMBLXmhnOd9Sc34@potrosnjasmole.jmojzq5.mongodb.net/?retryWrites=true&w=majority&appName=potrosnjaSmole')
+  .then(() => {
+    console.log('Connected to MongoDB');
+  })
+  .catch((error) => {
+    console.error('MongoDB connection error:', error);
+  });
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});

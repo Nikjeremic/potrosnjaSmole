@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { body, validationResult } from 'express-validator';
 import User from '../models/User';
+import { JWT_SECRET } from "../server";
 import { authenticateToken, AuthRequest } from '../middleware/auth';
 
 const router = express.Router();
@@ -47,7 +48,7 @@ router.post('/register', [
     // Generate token
     const token = jwt.sign(
       { userId: user._id, role: user.role },
-      process.env.JWT_SECRET!,
+      JWT_SECRET,
       { expiresIn: '24h' }
     );
 
@@ -97,7 +98,7 @@ router.post('/login', [
     // Generate token
     const token = jwt.sign(
       { userId: user._id, role: user.role },
-      process.env.JWT_SECRET!,
+      JWT_SECRET,
       { expiresIn: '24h' }
     );
 

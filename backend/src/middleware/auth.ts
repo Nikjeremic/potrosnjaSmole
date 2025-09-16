@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import { JWT_SECRET } from '../server';
 
 export interface AuthRequest extends Request {
   user?: any;
@@ -13,7 +14,7 @@ export const authenticateToken = (req: AuthRequest, res: Response, next: NextFun
     return res.status(401).json({ message: 'Token je potreban' });
   }
 
-  jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret', (err: any, decoded: any) => {
+  jwt.verify(token, JWT_SECRET, (err: any, decoded: any) => {
     if (err) {
       return res.status(403).json({ message: 'Nevažeći token' });
     }
