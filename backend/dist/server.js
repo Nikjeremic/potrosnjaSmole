@@ -14,6 +14,8 @@ const resins_1 = __importDefault(require("./routes/resins"));
 const consumption_1 = __importDefault(require("./routes/consumption"));
 const inventory_1 = __importDefault(require("./routes/inventory"));
 const materials_1 = __importDefault(require("./routes/materials"));
+const receipts_1 = __importDefault(require("./routes/receipts"));
+const disposals_1 = __importDefault(require("./routes/disposals"));
 // Load environment variables
 dotenv_1.default.config();
 exports.JWT_SECRET = process.env.JWT_SECRET || "potrosnja-smole-jwt-secret-key-2024-production-secure-token-key";
@@ -59,6 +61,8 @@ app.use('/api/resins', resins_1.default);
 app.use('/api/consumption', consumption_1.default);
 app.use('/api/inventory', inventory_1.default);
 app.use('/api/materials', materials_1.default);
+app.use('/api/receipts', receipts_1.default);
+app.use('/api/disposals', disposals_1.default);
 // Health check endpoint
 app.get('/api/health', (req, res) => {
     res.json({

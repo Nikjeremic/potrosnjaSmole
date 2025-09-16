@@ -10,6 +10,8 @@ import resinRoutes from './routes/resins';
 import consumptionRoutes from './routes/consumption';
 import inventoryRoutes from './routes/inventory';
 import materialRoutes from './routes/materials';
+import receiptRoutes from './routes/receipts';
+import disposalRoutes from './routes/disposals';
 
 // Load environment variables
 dotenv.config();
@@ -62,6 +64,8 @@ app.use('/api/resins', resinRoutes);
 app.use('/api/consumption', consumptionRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/materials', materialRoutes);
+app.use('/api/receipts', receiptRoutes);
+app.use('/api/disposals', disposalRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

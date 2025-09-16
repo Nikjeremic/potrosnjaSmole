@@ -93,3 +93,44 @@ export interface ShiftInfo {
   startTime: string;
   endTime: string;
 }
+
+export interface Receipt {
+  _id: string;
+  materialId: string;
+  materialName: string;
+  receiptDate: string;
+  receiptTime: string;
+  transporter: string;
+  quantity: number;
+  unit: string;
+  notes?: string;
+  createdBy?: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    username: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Disposal {
+  _id: string;
+  materialId: string;
+  materialName: string;
+  disposalDate: string;
+  disposalTime: string;
+  reason: string;
+  quantity: number;
+  unit: string;
+  description?: string;
+  location?: string;
+  createdBy?: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    username: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+}

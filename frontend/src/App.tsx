@@ -9,6 +9,8 @@ import Consumption from './components/Consumption';
 import Materials from './components/Materials';
 import Resins from './components/Resins';
 import Users from './components/Users';
+import Receipts from './components/Receipts';
+import Disposals from './components/Disposals';
 import ProtectedRoute from './components/ProtectedRoute';
 import 'primereact/resources/themes/lara-light-cyan/theme.css';
 import 'primereact/resources/primereact.min.css';
@@ -34,6 +36,8 @@ function App() {
               <Route path="materials" element={<Materials />} />
               <Route path="resins" element={<Resins />} />
               <Route path="users" element={<Users />} />
+<Route path="receipts" element={<Receipts />} />
+<Route path="disposals" element={<Disposals />} />
             </Route>
           </Routes>
         </Router>

@@ -42,6 +42,18 @@ const Layout: React.FC = () => {
       active: getActiveMenuItem('/materials')
     },
     {
+      label: 'Prijemnice',
+      icon: 'pi pi-truck',
+      path: '/receipts',
+      active: getActiveMenuItem('/receipts')
+    },
+    {
+      label: 'Rashodovanje',
+      icon: 'pi pi-exclamation-triangle',
+      path: '/disposals',
+      active: getActiveMenuItem('/disposals')
+    },
+    {
       label: 'Sarze',
       icon: 'pi pi-cog',
       path: '/resins',
@@ -69,6 +81,8 @@ const Layout: React.FC = () => {
       case '/dashboard': return 'Dashboard';
       case '/consumption': return 'Potrošnja';
       case '/materials': return 'Materijali';
+      case '/receipts': return 'Prijemnice';
+      case '/disposals': return 'Rashodovanje';
       case '/resins': return 'Sarze';
       case '/users': return 'Korisnici';
       default: return 'Dashboard';

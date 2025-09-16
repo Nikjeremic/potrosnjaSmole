@@ -1,0 +1,398 @@
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { Card } from 'primereact/card';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { Button } from 'primereact/button';
+import { Dialog } from 'primereact/dialog';
+import { InputText } from 'primereact/inputtext';
+import { InputNumber } from 'primereact/inputnumber';
+import { Dropdown } from 'primereact/dropdown';
+import { Calendar } from 'primereact/calendar';
+import { InputTextarea } from 'primereact/inputtextarea';
+import { Message } from 'primereact/message';
+import { Toast } from 'primereact/toast';
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
+import { Disposal, Material } from '../types';
+import { disposalsAPI, materialsAPI } from '../services/api';
+
+const Disposals: React.FC = () => {
+  const [disposals, setDisposals] = useState<Disposal[]>([]);
+  const [materials, setMaterials] = useState<Material[]>([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [editingDisposal, setEditingDisposal] = useState<Disposal | null>(null);
+  const [formData, setFormData] = useState({
+    materialId: '',
+    disposalDate: new Date(),
+    disposalTime: '',
+    reason: '',
+    quantity: 0,
+    unit: 'kg',
+    description: '',
+    location: ''
+  });
+  const [error, setError] = useState('');
+  const toast = useRef<Toast>(null);
+
+  const unitOptions = [
+    { label: 'kg', value: 'kg' },
+    { label: 'g', value: 'g' },
+    { label: 't', value: 't' }
+  ];
+
+  const reasonOptions = [
+    { label: 'Silos pukao', value: 'silos_pukao' },
+    { label: 'Cev pukla', value: 'cev_pukla' },
+    { label: 'Curenje', value: 'curenje' },
+    { label: 'Oštećenje opreme', value: 'ostecenje_opreme' },
+    { label: 'Gubitak pri transportu', value: 'gubitak_pri_transportu' },
+    { label: 'Kontaminacija', value: 'kontaminacija' },
+    { label: 'Istek roka', value: 'istek_roka' },
+    { label: 'Ostalo', value: 'ostalo' }
+  ];
+
+  const materialOptions = useMemo(() => {
+    return materials.map(material => ({
+      label: material.name,
+      value: material._id
+    }));
+  }, [materials]);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const [disposalsData, materialsData] = await Promise.all([
+        disposalsAPI.getAll(),
+        materialsAPI.getAll()
+      ]);
+      setDisposals(disposalsData);
+      setMaterials(materialsData);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  const handleAdd = () => {
+    setEditingDisposal(null);
+    setFormData({
+      materialId: '',
+      disposalDate: new Date(),
+      disposalTime: '',
+      reason: '',
+      quantity: 0,
+      unit: 'kg',
+      description: '',
+      location: ''
+    });
+    setError('');
+    setModalVisible(true);
+  };
+
+  const handleEdit = (disposal: Disposal) => {
+    setEditingDisposal(disposal);
+    setFormData({
+      materialId: disposal.materialId,
+      disposalDate: new Date(disposal.disposalDate),
+      disposalTime: disposal.disposalTime,
+      reason: disposal.reason,
+      quantity: disposal.quantity,
+      unit: disposal.unit,
+      description: disposal.description || '',
+      location: disposal.location || ''
+    });
+    setError('');
+    setModalVisible(true);
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await disposalsAPI.delete(id);
+      toast.current?.show({
+        severity: 'success',
+        summary: 'Uspešno',
+        detail: 'Rashodovanje je uspešno obrisano',
+        life: 3000
+      });
+      fetchData();
+    } catch (error: any) {
+      console.error("Error deleting disposal:", error);
+      const errorMessage = error.response?.data?.message || "Greška pri brisanju rashodovanja";
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Greška',
+        detail: errorMessage,
+        life: 5000
+      });
+    }
+  };
+
+  const handleSubmit = async () => {
+    try {
+      setError('');
+      
+      const disposalData = {
+        ...formData,
+        disposalDate: formData.disposalDate.toISOString().split('T')[0]
+      };
+      
+      if (editingDisposal) {
+        await disposalsAPI.update(editingDisposal._id, disposalData);
+      } else {
+        await disposalsAPI.create(disposalData);
+      }
+
+      setModalVisible(false);
+      fetchData();
+      
+      toast.current?.show({
+        severity: 'success',
+        summary: 'Uspešno',
+        detail: editingDisposal ? 'Rashodovanje je uspešno ažurirano' : 'Rashodovanje je uspešno kreirano',
+        life: 3000
+      });
+    } catch (error: any) {
+      setError(error.response?.data?.message || 'Greška pri čuvanju rashodovanja');
+    }
+  };
+
+  const actionsBodyTemplate = (rowData: Disposal) => {
+    return (
+      <div className="flex gap-2">
+        <Button 
+          icon="pi pi-pencil" 
+          className="p-button-text p-button-sm"
+          onClick={() => handleEdit(rowData)}
+        />
+        <Button 
+          icon="pi pi-trash" 
+          className="p-button-text p-button-sm p-button-danger"
+          onClick={() => {
+            confirmDialog({
+              message: 'Da li ste sigurni da želite da obrišete ovo rashodovanje?',
+              header: 'Potvrda brisanja',
+              icon: 'pi pi-exclamation-triangle',
+              accept: () => handleDelete(rowData._id)
+            });
+          }}
+        />
+      </div>
+    );
+  };
+
+  const dateBodyTemplate = (rowData: Disposal) => {
+    return new Date(rowData.disposalDate).toLocaleDateString('sr-RS');
+  };
+
+  const quantityBodyTemplate = (rowData: Disposal) => {
+    return `${rowData.quantity} ${rowData.unit}`;
+  };
+
+  const reasonBodyTemplate = (rowData: Disposal) => {
+    const reasonLabel = reasonOptions.find(option => option.value === rowData.reason)?.label || rowData.reason;
+    return reasonLabel;
+  };
+
+  return (
+    <div className="p-4">
+      <Toast ref={toast} />
+      <div className="flex justify-content-between align-items-center mb-4">
+        <h2>Upravljanje rashodovanjem</h2>
+        <div className="flex gap-2">
+          <Button 
+            icon="pi pi-refresh" 
+            onClick={fetchData} 
+            className="p-button-outlined"
+          />
+          <Button 
+            label="Dodaj rashodovanje" 
+            icon="pi pi-plus" 
+            onClick={handleAdd}
+            severity="info"
+          />
+        </div>
+      </div>
+
+      <Card title="Rashodovanje materijala">
+        <DataTable
+          value={disposals}
+          paginator
+          rows={10}
+          emptyMessage="Nema rashodovanja"
+          className="p-datatable-sm"
+        >
+          <Column field="materialName" header="Materijal" />
+          <Column 
+            field="disposalDate" 
+            header="Datum" 
+            body={dateBodyTemplate}
+          />
+          <Column field="disposalTime" header="Vreme" />
+          <Column 
+            field="reason" 
+            header="Razlog" 
+            body={reasonBodyTemplate}
+          />
+          <Column 
+            field="quantity" 
+            header="Količina" 
+            body={quantityBodyTemplate}
+          />
+          <Column field="location" header="Lokacija" />
+          <Column field="description" header="Opis" />
+          <Column 
+            field="createdBy" 
+            header="Uneo" 
+            body={(rowData: Disposal) => 
+              rowData.createdBy ? `${rowData.createdBy.firstName} ${rowData.createdBy.lastName}` : 'N/A'
+            }
+          />
+          <Column header="Akcije" body={actionsBodyTemplate} />
+        </DataTable>
+      </Card>
+
+      <Dialog
+        header={editingDisposal ? 'Izmeni rashodovanje' : 'Dodaj novo rashodovanje'}
+        visible={modalVisible}
+        onHide={() => setModalVisible(false)}
+        style={{ width: '700px' }}
+      >
+        {error && (
+          <Message severity="error" text={error} className="mb-3" />
+        )}
+        
+        <div className="grid">
+          <div className="col-12">
+            <div className="field">
+              <label htmlFor="materialId" className="block mb-2">Materijal *</label>
+              <Dropdown
+                id="materialId"
+                value={formData.materialId}
+                options={materialOptions}
+                onChange={(e) => setFormData({...formData, materialId: e.value})}
+                className="w-full"
+                placeholder="Izaberite materijal"
+                appendTo="self"
+              />
+            </div>
+          </div>
+          
+          <div className="col-6">
+            <div className="field">
+              <label htmlFor="disposalDate" className="block mb-2">Datum rashodovanja *</label>
+              <Calendar
+                id="disposalDate"
+                value={formData.disposalDate}
+                onChange={(e) => setFormData({...formData, disposalDate: e.value as Date})}
+                className="w-full"
+                dateFormat="dd.mm.yy"
+                showIcon
+              />
+            </div>
+          </div>
+          
+          <div className="col-6">
+            <div className="field">
+              <label htmlFor="disposalTime" className="block mb-2">Vreme rashodovanja *</label>
+              <InputText
+                id="disposalTime"
+                value={formData.disposalTime}
+                onChange={(e) => setFormData({...formData, disposalTime: e.target.value})}
+                className="w-full"
+                placeholder="HH:MM"
+              />
+            </div>
+          </div>
+          
+          <div className="col-12">
+            <div className="field">
+              <label htmlFor="reason" className="block mb-2">Razlog rashodovanja *</label>
+              <Dropdown
+                id="reason"
+                value={formData.reason}
+                options={reasonOptions}
+                onChange={(e) => setFormData({...formData, reason: e.value})}
+                className="w-full"
+                placeholder="Izaberite razlog"
+                appendTo="self"
+              />
+            </div>
+          </div>
+          
+          <div className="col-8">
+            <div className="field">
+              <label htmlFor="quantity" className="block mb-2">Količina *</label>
+              <InputNumber
+                id="quantity"
+                value={formData.quantity}
+                onValueChange={(e) => setFormData({...formData, quantity: e.value || 0})}
+                className="w-full"
+                min={0}
+                suffix={` ${formData.unit}`}
+              />
+            </div>
+          </div>
+          
+          <div className="col-4">
+            <div className="field">
+              <label htmlFor="unit" className="block mb-2">Jedinica</label>
+              <Dropdown
+                id="unit"
+                value={formData.unit}
+                options={unitOptions}
+                onChange={(e) => setFormData({...formData, unit: e.value})}
+                className="w-full"
+                appendTo="self"
+              />
+            </div>
+          </div>
+          
+          <div className="col-12">
+            <div className="field">
+              <label htmlFor="location" className="block mb-2">Lokacija</label>
+              <InputText
+                id="location"
+                value={formData.location}
+                onChange={(e) => setFormData({...formData, location: e.target.value})}
+                className="w-full"
+                placeholder="Unesite lokaciju gde se desilo rashodovanje"
+              />
+            </div>
+          </div>
+          
+          <div className="col-12">
+            <div className="field">
+              <label htmlFor="description" className="block mb-2">Opis</label>
+              <InputTextarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => setFormData({...formData, description: e.target.value})}
+                className="w-full"
+                rows={3}
+                placeholder="Detaljan opis rashodovanja..."
+              />
+            </div>
+          </div>
+          
+          <div className="col-12 flex justify-content-end gap-2">
+            <Button 
+              label={editingDisposal ? 'Ažuriraj' : 'Kreiraj'}
+              onClick={handleSubmit}
+              severity="info"
+            />
+            <Button 
+              label="Otkaži"
+              onClick={() => setModalVisible(false)}
+              className="p-button-outlined"
+            />
+          </div>
+        </div>
+      </Dialog>
+
+      <ConfirmDialog />
+    </div>
+  );
+};
+
+export default Disposals;

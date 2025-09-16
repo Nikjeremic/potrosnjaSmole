@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { User, Material, Resin, Consumption, Inventory, AuthResponse } from '../types';
+import { User, Material, Resin, Consumption, Inventory, AuthResponse, Receipt, Disposal } from '../types';
 
-const API_BASE_URL = 'https://stock.eightcode.com/api';
+const API_BASE_URL = 'http://localhost:3000/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -148,5 +148,63 @@ export const inventoryAPI = {
   createForMaterial: async (materialId: string, totalWeight: number): Promise<Inventory> => {
     const response = await api.post(`/inventory/material/${materialId}`, { totalWeight });
     return response.data;
+  }
+};
+
+// Receipts API
+export const receiptsAPI = {
+  getAll: async (): Promise<Receipt[]> => {
+    const response = await api.get('/receipts');
+    return response.data;
+  },
+  getById: async (id: string): Promise<Receipt> => {
+    const response = await api.get(`/receipts/${id}`);
+    return response.data;
+  },
+  getByMaterialId: async (materialId: string): Promise<Receipt[]> => {
+    const response = await api.get(`/receipts/material/${materialId}`);
+    return response.data;
+  },
+  create: async (receiptData: Partial<Receipt>): Promise<Receipt> => {
+    const response = await api.post('/receipts', receiptData);
+    return response.data;
+  },
+  update: async (id: string, receiptData: Partial<Receipt>): Promise<Receipt> => {
+    const response = await api.put(`/receipts/${id}`, receiptData);
+    return response.data;
+  },
+  delete: async (id: string): Promise<void> => {
+    await api.delete(`/receipts/${id}`);
+  }
+};
+
+// Disposals API
+export const disposalsAPI = {
+  getAll: async (): Promise<Disposal[]> => {
+    const response = await api.get('/disposals');
+    return response.data;
+  },
+  getById: async (id: string): Promise<Disposal> => {
+    const response = await api.get(`/disposals/${id}`);
+    return response.data;
+  },
+  getByMaterialId: async (materialId: string): Promise<Disposal[]> => {
+    const response = await api.get(`/disposals/material/${materialId}`);
+    return response.data;
+  },
+  getByReason: async (reason: string): Promise<Disposal[]> => {
+    const response = await api.get(`/disposals/reason/${reason}`);
+    return response.data;
+  },
+  create: async (disposalData: Partial<Disposal>): Promise<Disposal> => {
+    const response = await api.post('/disposals', disposalData);
+    return response.data;
+  },
+  update: async (id: string, disposalData: Partial<Disposal>): Promise<Disposal> => {
+    const response = await api.put(`/disposals/${id}`, disposalData);
+    return response.data;
+  },
+  delete: async (id: string): Promise<void> => {
+    await api.delete(`/disposals/${id}`);
   }
 };
