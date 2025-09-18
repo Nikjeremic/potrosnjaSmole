@@ -1,178 +1,173 @@
-# Potrošnja Smole - Aplikacija za praćenje potrošnje smole
+# Potrošnja Smole - Resin Consumption Tracking App
 
-Aplikacija za praćenje potrošnje smole sa automatskim generisanjem smena i upravljanjem inventarom.
+Aplikacija za praćenje potrošnje smole u industriji. Omogućava upravljanje inventarom, praćenje rashodovanja, kreiranje prijemnica i detaljno praćenje potrošnje materijala.
 
-## Funkcionalnosti
+## 🚀 Brza instalacija za produkciju
 
-### Autentifikacija
-- Login sistem sa korisničkim imenom i lozinkom
-- Dve uloge: Admin i Korisnik
-- JWT token autentifikacija
+```bash
+# Kloniraj repozitorijum
+git clone https://github.com/Nikjeremic/potrosnjaSmole.git
+cd potrosnjaSmole
 
-### Upravljanje korisnicima (Admin)
-- Dodavanje novih korisnika
-- Brisanje korisnika
-- Resetovanje lozinki
-- Izmena korisničkih podataka
+# Instaliraj sve zavisnosti
+npm run install-all
 
-### Upravljanje smolama
-- Dodavanje novih tipova smola (BMGR-1, BMGR-2, itd.)
-- Definisanje težine za svaku smolu
-- Pregled dostupnih smola
+# Build za produkciju
+npm run build
 
-### Praćenje potrošnje
-- Automatsko generisanje redova za tri smene dnevno:
-  - Prva smena: 06:00 - 14:00
-  - Druga smena: 14:00 - 22:00
-  - Treća smena: 22:00 - 06:00
-- Unos imena i prezimena zaposlenog
-- Odabir smole iz dropdown liste
-- Unos broja veziva
-- Automatsko računanje ukupne potrošnje (vezivo × težina smole)
-- Oduzimanje od ukupnog stanja inventara
+# Pokreni aplikaciju
+npm start
+```
 
-### Dashboard
-- Pregled ukupnog dostupnog stanja
-- Pregled ukupne potrošnje
-- Pregled dnevne potrošnje
-- Statistike po smenama
+## 📋 Preduslovi
 
-## Tehnologije
+- Node.js (v16 ili noviji)
+- MongoDB (lokalno ili MongoDB Atlas)
+- npm ili yarn
+
+## 🛠️ Razvoj
+
+```bash
+# Instaliraj zavisnosti
+npm run install-all
+
+# Pokreni u development modu
+npm run dev
+```
+
+Aplikacija će biti dostupna na:
+- Frontend: http://localhost:3001
+- Backend: http://localhost:3000
+
+## 🏗️ Build za produkciju
+
+```bash
+# Automatski build skript
+./build-production.sh
+
+# Ili ručno
+npm run build
+```
+
+## 🌐 Deployment
+
+### Vercel (Preporučeno)
+
+1. Instaliraj Vercel CLI:
+   ```bash
+   npm i -g vercel
+   ```
+
+2. Deploy:
+   ```bash
+   vercel --prod
+   ```
+
+3. Postavi environment varijable u Vercel dashboard-u
+
+### Druge platforme
+
+Detaljne instrukcije u [DEPLOYMENT.md](./DEPLOYMENT.md)
+
+## ⚙️ Konfiguracija
+
+### Environment varijable
+
+Kreiraj `backend/.env.production`:
+
+```env
+NODE_ENV=production
+PORT=3000
+JWT_SECRET=your-secure-jwt-secret-key-here-minimum-32-characters
+MONGODB_URI=mongodb://localhost:27017/potrosnja-smole-prod
+ALLOWED_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
+```
+
+### MongoDB
+
+- **Lokalno**: Instaliraj MongoDB i pokreni na portu 27017
+- **MongoDB Atlas**: Kreiraj cluster i koristi connection string
+
+## 📁 Struktura projekta
+
+```
+potrosnjaSmole/
+├── frontend/          # React aplikacija
+│   ├── src/
+│   │   ├── components/    # React komponente
+│   │   ├── services/      # API servisi
+│   │   └── types.ts       # TypeScript tipovi
+│   └── build/         # Production build
+├── backend/           # Node.js/Express API
+│   ├── src/
+│   │   ├── models/       # Mongoose modeli
+│   │   ├── routes/        # API rute
+│   │   └── middleware/    # Middleware funkcije
+│   └── dist/          # Compiled JavaScript
+├── vercel.json        # Vercel konfiguracija
+└── DEPLOYMENT.md      # Detaljne instrukcije za deployment
+```
+
+## 🔧 Funkcionalnosti
+
+- **Upravljanje materijalima**: Dodavanje, izmena i brisanje materijala
+- **Praćenje potrošnje**: Detaljno praćenje potrošnje po smenama
+- **Rashodovanje**: Evidencija rashodovanja sa razlozima
+- **Prijemnice**: Kreiranje i upravljanje prijemnicama
+- **Korisnici**: Upravljanje korisnicima sistema
+- **Dashboard**: Pregled ključnih metrika
+
+## 🛡️ Bezbednost
+
+- JWT autentifikacija
+- CORS zaštita
+- Validacija podataka
+- Hashovanje lozinki
+
+## 📊 Tehnologije
+
+### Frontend
+- React 19
+- TypeScript
+- PrimeReact (UI komponente)
+- Axios (HTTP klijent)
+- React Router
 
 ### Backend
 - Node.js
 - Express.js
 - TypeScript
-- MongoDB
-- Mongoose
+- MongoDB/Mongoose
 - JWT autentifikacija
-- bcryptjs za hashovanje lozinki
+- bcryptjs
 
-### Frontend
-- React.js
-- TypeScript
-- PrimeReact UI komponente
-- PrimeFlex CSS framework
-- PrimeIcons ikone
-- React Router
-- Axios za API pozive
-- Day.js za rad sa datumima
+## 🐛 Troubleshooting
 
-## Instalacija i pokretanje
+### Česti problemi
 
-### Backend
-```bash
-cd backend
-npm install
-npm run dev
-```
+1. **CORS greške**: Proveri `ALLOWED_ORIGINS` u environment varijablama
+2. **Autentifikacija**: Proveri da li je `JWT_SECRET` isti na frontend i backend
+3. **Database**: Proveri MongoDB connection string
+4. **Build greške**: Proveri da li su sve zavisnosti instalirane
 
-Backend će biti dostupan na `http://localhost:5000`
+### Logovi
 
-### Frontend
-```bash
-cd frontend
-npm install
-npm start
-```
+- Backend logovi: Console output
+- Frontend greške: Browser Developer Tools
+- Vercel logovi: Vercel dashboard
 
-Frontend će biti dostupan na `http://localhost:3000`
+## �� Licenca
 
-### Pokretanje oba servera odjednom
-```bash
-npm run dev
-```
+ISC License
 
-## Baza podataka
+## 👨‍💻 Autor
 
-Aplikacija koristi MongoDB Atlas sa sledećom konekcijom:
-```
-mongodb+srv://niksys97_mngdb_user:ViMBLXmhnOd9Sc34@potrosnjasmole.jmojzq5.mongodb.net/?retryWrites=true&w=majority&appName=potrosnjaSmole
-```
+Nikjeremic
 
-## Struktura baze podataka
+## 🤝 Doprinos
 
-### Users
-- username, email, password, firstName, lastName, role
+Pull requestovi su dobrodošli! Za veće promene, molimo otvorite issue prvo da diskutujemo šta želite da promenite.
 
-### Resins
-- name, weight
+## 📞 Podrška
 
-### Consumption
-- date, shift, employeeName, resinId, resinName, resinWeight, usageCount, totalConsumption
-
-### Inventory
-- resinId, resinName, totalWeight, consumedWeight, availableWeight
-
-## API Endpoints
-
-### Autentifikacija
-- POST `/api/auth/login` - Prijava
-- POST `/api/auth/register` - Registracija
-- GET `/api/auth/me` - Trenutni korisnik
-
-### Korisnici (Admin)
-- GET `/api/users` - Lista korisnika
-- POST `/api/users` - Kreiranje korisnika
-- PUT `/api/users/:id` - Ažuriranje korisnika
-- PUT `/api/users/:id/reset-password` - Resetovanje lozinke
-- DELETE `/api/users/:id` - Brisanje korisnika
-
-### Smole
-- GET `/api/resins` - Lista smola
-- POST `/api/resins` - Kreiranje smole
-- PUT `/api/resins/:id` - Ažuriranje smole
-- DELETE `/api/resins/:id` - Brisanje smole
-
-### Potrošnja
-- GET `/api/consumption` - Lista potrošnje
-- POST `/api/consumption` - Kreiranje zapisa potrošnje
-- PUT `/api/consumption/:id` - Ažuriranje zapisa
-- DELETE `/api/consumption/:id` - Brisanje zapisa
-
-### Inventar
-- GET `/api/inventory` - Stanje inventara
-- PUT `/api/inventory/:id` - Ažuriranje ukupne težine
-
-## Korišćenje
-
-1. Pokrenite backend i frontend aplikacije
-2. Otvorite `http://localhost:3000`
-3. Prijavite se sa admin nalogom
-4. Dodajte tipove smola sa njihovim težinama
-5. Dodajte korisnike ako je potrebno
-6. Idite na "Potrošnja" tab da dodajete zapise o potrošnji
-7. Pregledajte statistike na Dashboard-u
-
-## Napomene
-
-- Aplikacija automatski generiše redove za svaku smenu svakog dana
-- Ukupno stanje se automatski ažurira kada se dodaju novi zapisi potrošnje
-- Admin može ručno ažurirati ukupno stanje ako je potrebno
-- Sve akcije su logovane sa timestamp-om
-- UI je dizajniran sa PrimeReact komponentama za moderni izgled
-
-## PrimeReact Komponente
-
-Aplikacija koristi sledeće PrimeReact komponente:
-- Card - za kartice sa statistikama
-- DataTable - za tabele sa podacima
-- Dialog - za modalne prozore
-- Button - za dugmad
-- InputText - za tekstualne inpute
-- Password - za lozinke
-- Dropdown - za padajuće liste
-- Calendar - za odabir datuma
-- Message - za poruke
-- ConfirmDialog - za potvrde brisanja
-- Sidebar - za navigaciju
-- Menu - za menije
-- SplitButton - za dugmad sa opcijama
-
-## Stilizovanje
-
-Aplikacija koristi:
-- PrimeReact tema: Lara Light Blue
-- PrimeFlex za flexbox layout
-- PrimeIcons za ikone
-- Custom CSS klase za dodatno stilizovanje
+Za probleme sa deployment-om ili funkcionalnostima, molimo otvorite issue na GitHub-u.
